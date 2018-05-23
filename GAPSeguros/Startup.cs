@@ -49,6 +49,7 @@ namespace SuperZapatosGAP
 
 
 			services.AddScoped<IPolicyRepository, PolicyRepository>();
+			services.AddScoped<IRiskTypeRepository, RiskTypeRepository>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

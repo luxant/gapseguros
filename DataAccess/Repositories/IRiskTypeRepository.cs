@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
-	public interface ICoverageRepository : IRepository<Coverage>
+	public interface IRiskTypeRepository : IRepository<RiskType>
 	{
-
 	}
 }

@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
-	public class PolicyRepository : IPolicyRepository
+	public class RiskTypeRepository : IRiskTypeRepository
 	{
 		private readonly GAPSegurosContext _context;
 
-		public PolicyRepository(GAPSegurosContext context)
+		public RiskTypeRepository(GAPSegurosContext context)
 		{
 			_context = context;
 		}
 
-		public async void Create(Policy model)
+		public async void Create(RiskType model)
 		{
 			_context.Add(model);
 			await _context.SaveChangesAsync();
@@ -25,28 +25,25 @@ namespace DataAccess.Repositories
 
 		public async void DeleteById(int id)
 		{
-			var policy = await _context.Policy.SingleOrDefaultAsync(m => m.PolicyId == id);
-			_context.Policy.Remove(policy);
+			var policy = await _context.RiskType.SingleOrDefaultAsync(m => m.RiskTypeId == id);
+			_context.RiskType.Remove(policy);
 			await _context.SaveChangesAsync();
 		}
 
-		public Task<IQueryable<Policy>> GetAll()
+		public Task<IQueryable<RiskType>> GetAll()
 		{
-			var result = _context.Policy
-				.Include(x => x.RiskType)
-				.AsQueryable();
+			var result = _context.RiskType.AsQueryable();
 
 			return Task.FromResult(result);
 		}
 
-		public Task<Policy> GetById(int? id)
+		public Task<RiskType> GetById(int? id)
 		{
-			return _context.Policy
-				.Include(p => p.RiskType)
-				.SingleOrDefaultAsync(m => m.PolicyId == id);
+			return _context.RiskType
+				.SingleOrDefaultAsync(m => m.RiskTypeId == id);
 		}
 
-		public async void Update(Policy model)
+		public async void Update(RiskType model)
 		{
 			_context.Update(model);
 			await _context.SaveChangesAsync();

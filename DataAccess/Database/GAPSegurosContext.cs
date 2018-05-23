@@ -6,15 +6,14 @@ namespace DataAccess.Database
 {
 	public partial class GAPSegurosContext : DbContext
 	{
-		public virtual DbSet<Coverage> Coverage { get; set; }
-		public virtual DbSet<CoverageByPolicy> CoverageByPolicy { get; set; }
+		public virtual DbSet<CoverageType> CoverageType { get; set; }
+		public virtual DbSet<CoverageTypeByPolicy> CoverageTypeByPolicy { get; set; }
 		public virtual DbSet<Policy> Policy { get; set; }
 		public virtual DbSet<PolicyByUser> PolicyByUser { get; set; }
 		public virtual DbSet<RiskType> RiskType { get; set; }
 		public virtual DbSet<Role> Role { get; set; }
 		public virtual DbSet<RoleByUser> RoleByUser { get; set; }
 		public virtual DbSet<User> User { get; set; }
-
 
 		public GAPSegurosContext(DbContextOptions<GAPSegurosContext> options)
 : base(options)
@@ -31,26 +30,26 @@ namespace DataAccess.Database
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			modelBuilder.Entity<Coverage>(entity =>
+			modelBuilder.Entity<CoverageType>(entity =>
 			{
 				entity.Property(e => e.Name)
 					.IsRequired()
 					.HasMaxLength(50);
 			});
 
-			modelBuilder.Entity<CoverageByPolicy>(entity =>
+			modelBuilder.Entity<CoverageTypeByPolicy>(entity =>
 			{
-				entity.HasOne(d => d.Coverage)
-					.WithMany(p => p.CoverageByPolicy)
-					.HasForeignKey(d => d.CoverageId)
+				entity.HasOne(d => d.CoverageType)
+					.WithMany(p => p.CoverageTypeByPolicy)
+					.HasForeignKey(d => d.CoverageTypeId)
 					.OnDelete(DeleteBehavior.ClientSetNull)
-					.HasConstraintName("FK_CoverageByPolicy_Coverage");
+					.HasConstraintName("FK_CoverageTypeByPolicy_CoverageType");
 
 				entity.HasOne(d => d.Policy)
-					.WithMany(p => p.CoverageByPolicy)
+					.WithMany(p => p.CoverageTypeByPolicy)
 					.HasForeignKey(d => d.PolicyId)
 					.OnDelete(DeleteBehavior.ClientSetNull)
-					.HasConstraintName("FK_CoverageByPolicy_Policy");
+					.HasConstraintName("FK_CoverageTypeByPolicy_Policy");
 			});
 
 			modelBuilder.Entity<Policy>(entity =>

@@ -9,5 +9,13 @@ namespace DataAccess.Repositories
 	public interface IRepository<T>
 	{
 		Task<IQueryable<T>> GetAll();
+
+		void Create(T model);
+
+		Task<T> GetById(int? id);
+
+		void Update(T model);
+
+		void DeleteById(int id);
 	}
 }

@@ -12,15 +12,13 @@ namespace GAPSeguros.Controllers
 {
 	public class PoliciesController : Controller
 	{
-		private readonly GAPSegurosContext _context;
 		private readonly IPolicyRepository _policyRepository;
-		private readonly ICoverageRepository _coverageRepository;
+		private readonly IRiskTypeRepository _riskTypeRepository;
 
-		public PoliciesController(GAPSegurosContext context, IPolicyRepository policyRepository, ICoverageRepository coverageRepository)
+		public PoliciesController(IPolicyRepository policyRepository, IRiskTypeRepository riskTypeRepository)
 		{
-			_context = context;
 			_policyRepository = policyRepository;
-			_coverageRepository = coverageRepository;
+			_riskTypeRepository = riskTypeRepository;
 		}
 
 		// GET: Policies
@@ -37,9 +35,7 @@ namespace GAPSeguros.Controllers
 				return NotFound();
 			}
 
-			var policy = await _context.Policy
-				.Include(p => p.RiskType)
-				.SingleOrDefaultAsync(m => m.PolicyId == id);
+			var policy = await _policyRepository.GetById(id);
 			if (policy == null)
 			{
 				return NotFound();
@@ -49,10 +45,11 @@ namespace GAPSeguros.Controllers
 		}
 
 		// GET: Policies/Create
-		public IActionResult Create()
+		public async Task<IActionResult> Create()
 		{
-			ViewData["RiskTypeId"] = new SelectList(_context.RiskType, "RiskTypeId", "Name");
+			var riskTypes = await _riskTypeRepository.GetAll();
 
+			ViewData["RiskTypeId"] = new SelectList(riskTypes, "RiskTypeId", "Name");
 			return View();
 		}
 
@@ -61,15 +58,18 @@ namespace GAPSeguros.Controllers
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("PolicyId,Name,Description,ValidityStart,CoverageSpan,Price,RiskTypeId")] Policy policy)
+		public async Task<IActionResult> Create([Bind("PolicyId,Coverage,Name,Description,ValidityStart,CoverageSpan,Price,RiskTypeId")] Policy policy)
 		{
 			if (ModelState.IsValid)
 			{
-				_context.Add(policy);
-				await _context.SaveChangesAsync();
+				_policyRepository.Create(policy);
+
 				return RedirectToAction(nameof(Index));
 			}
-			ViewData["RiskTypeId"] = new SelectList(_context.RiskType, "RiskTypeId", "Name", policy.RiskTypeId);
+
+			var riskTypes = await _riskTypeRepository.GetAll();
+
+			ViewData["RiskTypeId"] = new SelectList(riskTypes, "RiskTypeId", "Name", policy.RiskTypeId);
 			return View(policy);
 		}
 
@@ -81,12 +81,16 @@ namespace GAPSeguros.Controllers
 				return NotFound();
 			}
 
-			var policy = await _context.Policy.SingleOrDefaultAsync(m => m.PolicyId == id);
+			// We use the repository to get the data
+			var policy = await _policyRepository.GetById(id);
 			if (policy == null)
 			{
 				return NotFound();
 			}
-			ViewData["RiskTypeId"] = new SelectList(_context.RiskType, "RiskTypeId", "Name", policy.RiskTypeId);
+
+			var riskTypes = await _riskTypeRepository.GetAll();
+
+			ViewData["RiskTypeId"] = new SelectList(riskTypes, "RiskTypeId", "Name", policy.RiskTypeId);
 			return View(policy);
 		}
 
@@ -95,7 +99,7 @@ namespace GAPSeguros.Controllers
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("PolicyId,Name,Description,ValidityStart,CoverageSpan,Price,RiskTypeId")] Policy policy)
+		public async Task<IActionResult> Edit(int id, [Bind("PolicyId,Coverage,Name,Description,ValidityStart,CoverageSpan,Price,RiskTypeId")] Policy policy)
 		{
 			if (id != policy.PolicyId)
 			{
@@ -106,8 +110,7 @@ namespace GAPSeguros.Controllers
 			{
 				try
 				{
-					_context.Update(policy);
-					await _context.SaveChangesAsync();
+					_policyRepository.Update(policy);
 				}
 				catch (DbUpdateConcurrencyException)
 				{
@@ -122,7 +125,10 @@ namespace GAPSeguros.Controllers
 				}
 				return RedirectToAction(nameof(Index));
 			}
-			ViewData["RiskTypeId"] = new SelectList(_context.RiskType, "RiskTypeId", "Name", policy.RiskTypeId);
+
+			var riskTypes = await _riskTypeRepository.GetAll();
+
+			ViewData["RiskTypeId"] = new SelectList(riskTypes, "RiskTypeId", "Name", policy.RiskTypeId);
 			return View(policy);
 		}
 
@@ -134,9 +140,8 @@ namespace GAPSeguros.Controllers
 				return NotFound();
 			}
 
-			var policy = await _context.Policy
-				.Include(p => p.RiskType)
-				.SingleOrDefaultAsync(m => m.PolicyId == id);
+			var policy = await _policyRepository.GetById(id);
+
 			if (policy == null)
 			{
 				return NotFound();
@@ -150,15 +155,14 @@ namespace GAPSeguros.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
 		{
-			var policy = await _context.Policy.SingleOrDefaultAsync(m => m.PolicyId == id);
-			_context.Policy.Remove(policy);
-			await _context.SaveChangesAsync();
+			_policyRepository.DeleteById(id);
+
 			return RedirectToAction(nameof(Index));
 		}
 
 		private bool PolicyExists(int id)
 		{
-			return _context.Policy.Any(e => e.PolicyId == id);
+			return _policyRepository.GetById(id) != null;
 		}
 	}
 }
