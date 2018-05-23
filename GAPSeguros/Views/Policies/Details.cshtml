@@ -1,0 +1,54 @@
+﻿@model DataAccess.Database.Policy
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Policy</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ValidityStart)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ValidityStart)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CoverageSpan)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CoverageSpan)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RiskType)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RiskType.Name)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.PolicyId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
