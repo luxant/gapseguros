@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using SuperZapatosGAP.Models;
+using GAPSeguros.Models;
 
-namespace SuperZapatosGAP.Controllers
+namespace GAPSeguros.Controllers
 {
 	public class HomeController : Controller
 	{

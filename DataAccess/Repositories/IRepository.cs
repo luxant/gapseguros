@@ -10,7 +10,7 @@ namespace DataAccess.Repositories
 	{
 		Task<IQueryable<T>> GetAll();
 
-		Task Create(T model);
+		Task<T> Create(T model);
 
 		Task<T> GetById(int? id);
 

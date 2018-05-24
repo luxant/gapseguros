@@ -17,10 +17,12 @@ namespace DataAccess.Repositories
 			_context = context;
 		}
 
-		public async Task Create(PolicyByUser model)
+		public async Task<PolicyByUser> Create(PolicyByUser model)
 		{
 			_context.Add(model);
 			await _context.SaveChangesAsync();
+
+			return model;
 		}
 
 		public async Task DeleteById(int id)

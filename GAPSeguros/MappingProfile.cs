@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SuperZapatosGAP
+namespace GAPSeguros
 {
 	public class MappingProfile : Profile
 	{
 		public MappingProfile()
 		{
-			//CreateMap<Store, StoresDTO>();
-			//CreateMap<Articles, ArticlesDTO>().ForMember(destination => destination.StoreName, source => source.MapFrom(y => y.Store.Name));
+			CreateMap<User, UserDTO>();
+			CreateMap<Policy, PolicyDTO>();
 		}
 	}
 }

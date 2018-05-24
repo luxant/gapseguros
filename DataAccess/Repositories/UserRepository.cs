@@ -17,10 +17,12 @@ namespace DataAccess.Repositories
 			_context = context;
 		}
 
-		public async Task Create(User model)
+		public async Task<User> Create(User model)
 		{
 			_context.Add(model);
 			await _context.SaveChangesAsync();
+
+			return model;
 		}
 
 		public async Task DeleteById(int id)
@@ -41,6 +43,16 @@ namespace DataAccess.Repositories
 		{
 			return _context.User
 				.SingleOrDefaultAsync(m => m.UserId == id);
+		}
+
+		public Task<IQueryable<User>> SearchUsersByTerm(string serachTerm)
+		{
+			var result = _context.User
+				.Include(x => x.PolicyByUser)
+					.ThenInclude(x => x.Policy) // Include user already assigned policies
+				.Where(x => x.Name.Contains(serachTerm));
+
+			return Task.FromResult(result);
 		}
 
 		public async Task Update(User model)

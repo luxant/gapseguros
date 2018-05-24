@@ -13,6 +13,8 @@ namespace DataAccess.DTO
 
 		public ErrorCode? ErrorCode { get; set; }
 
+		public object Data { get; set; }
+
 		public string ErrorMsg
 		{
 			get

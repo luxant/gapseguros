@@ -9,5 +9,6 @@ namespace DataAccess.Repositories
 {
 	public interface IUserRepository : IRepository<User>
 	{
+		Task<IQueryable<User>> SearchUsersByTerm(string serachTerm);
 	}
 }

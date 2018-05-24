@@ -1,11 +1,11 @@
 using System;
 
-namespace SuperZapatosGAP.Models
+namespace GAPSeguros.Models
 {
-    public class ErrorViewModel
-    {
-        public string RequestId { get; set; }
+	public class ErrorViewModel
+	{
+		public string RequestId { get; set; }
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-    }
+		public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+	}
 }

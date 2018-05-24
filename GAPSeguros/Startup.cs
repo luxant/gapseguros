@@ -13,7 +13,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using DataAccess.Repositories;
 
-namespace SuperZapatosGAP
+namespace GAPSeguros
 {
 	public class Startup
 	{

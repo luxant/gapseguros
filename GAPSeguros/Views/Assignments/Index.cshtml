@@ -1,0 +1,90 @@
+﻿@model IEnumerable<DataAccess.Database.Policy>
+
+@{
+	ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+
+<div id="assigment-component">
+	<section class="clearfix">
+		<div class="col-md-4">
+			<label class="col-md-6">Search for user</label>
+			<div class="col-md-6">
+				<input class="form-control" v-model="userFilter" />
+			</div>
+		</div>
+		<div class="col-md-8">
+			<label class="col-md-4">Selected user:</label>
+			<span class="col-md-8" v-if="selectedUser">{{selectedUser.name}}</span>
+			<span class="col-md-8" v-else="!selectedUser">N/A</span>
+		</div>
+	</section>
+	<section>
+		<div class="col-md-12" v-show="showSearchTable">
+			<h3>User list</h3>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>User name</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="user in users">
+						<td>{{user.name}}</td>
+						<td>
+							<button class="btn btn-default" v-on:click="makeSelectedUser(user)">Select</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</section>
+	<section>
+		<h3>Assigned policies</h3>
+		<div class="col-md-12">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Policy</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody v-if="selectedUser">
+					<tr v-for="(policyByUser, index) in selectedUser.policyByUser">
+						<td>{{policyByUser.policy.name}}</td>
+						<td>
+							<button class="btn btn-default" v-on:click="removePolicyForSelectedUser(policyByUser, index)">Remove</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</section>
+	<h3>All policies</h3>
+	<div class="col-md-12">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Policy</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="policy in policies">
+					<td>{{policy.name}}</td>
+					<td>
+						<button :disabled="!isUserSelected" class="btn btn-default" v-on:click="assignPolicy(policy)">Assign policy</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+@section Scripts {
+	<script src="~/js/components/assigments.js"></script>
+}
