@@ -13,6 +13,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using DataAccess.Repositories;
 using DataAccess.Validation;
+using FluentValidation;
 
 namespace GAPSeguros
 {
@@ -47,11 +48,14 @@ namespace GAPSeguros
 			// We add automapper as a service
 			services.AddAutoMapper(typeof(Startup));
 
-
+			// Repository DI
 			services.AddScoped<IPolicyRepository, PolicyRepository>();
 			services.AddScoped<IRiskTypeRepository, RiskTypeRepository>();
 			services.AddScoped<IPolicyByUserRepository, PolicyByUserRepository>();
 			services.AddScoped<IUserRepository, UserRepository>();
+
+			// Validators DI
+			services.AddScoped<AbstractValidator<Policy>, PolicyValidator>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

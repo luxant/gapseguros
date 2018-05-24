@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Database;
 using DataAccess.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 namespace GAPSeguros.Controllers
 {
@@ -14,11 +16,13 @@ namespace GAPSeguros.Controllers
 	{
 		private readonly IPolicyRepository _policyRepository;
 		private readonly IRiskTypeRepository _riskTypeRepository;
+		private readonly AbstractValidator<Policy> _abstractValidator;
 
-		public PoliciesController(IPolicyRepository policyRepository, IRiskTypeRepository riskTypeRepository)
+		public PoliciesController(IPolicyRepository policyRepository, IRiskTypeRepository riskTypeRepository, AbstractValidator<Policy> abstractValidator)
 		{
 			_policyRepository = policyRepository;
 			_riskTypeRepository = riskTypeRepository;
+			_abstractValidator = abstractValidator;
 		}
 
 		// GET: Policies
@@ -155,9 +159,23 @@ namespace GAPSeguros.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
 		{
-			await _policyRepository.DeleteById(id);
+			var entity = await _policyRepository.GetById(id);
 
-			return RedirectToAction(nameof(Index));
+			var result = _abstractValidator.Validate(entity, ruleSet: "delete");
+
+
+			if (result.IsValid)
+			{
+				await _policyRepository.DeleteById(id);
+
+				return RedirectToAction(nameof(Index));
+			}
+			else
+			{
+				result.AddToModelState(ModelState, null);
+
+				return await Delete(id);
+			}
 		}
 
 		private bool PolicyExists(int id)

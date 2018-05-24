@@ -50,6 +50,11 @@ namespace DataAccess.Repositories
 				.SingleOrDefaultAsync(m => m.PolicyByUserId == id);
 		}
 
+		public IQueryable<PolicyByUser> GetPolicyAssignations(int policyId)
+		{
+			return _context.PolicyByUser.Where(x => x.PolicyId == policyId);
+		}
+
 		public async Task Update(PolicyByUser model)
 		{
 			_context.Update(model);
