@@ -43,7 +43,7 @@ namespace DataAccess.Validation
 
 		private bool BeLowerThan50IfRiskIsHigh(Policy policy)
 		{
-			return policy.RiskTypeId == (int)Enums.RiskType.High && policy.Coverage <= 50;
+			return policy.RiskTypeId == (int)Enums.RiskType.High && policy.Coverage > 50 ? false : true;
 		}
 	}
 }
