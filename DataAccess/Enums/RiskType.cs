@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Enums
 {
-	public enum RiskType
+	public enum ErrorCode
 	{
-		Low = 1,
-		Medium = 2,
-		MidHigh = 3,
-		High = 4,
+		BadRequest = 400,
+		NotAuthorized = 401,
+		RecordNotFound = 404,
+		ServerError = 500,
 	}
 }

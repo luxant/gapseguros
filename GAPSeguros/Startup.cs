@@ -12,6 +12,7 @@ using FluentValidation.AspNetCore;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using DataAccess.Repositories;
+using DataAccess.Validation;
 
 namespace GAPSeguros
 {
@@ -35,8 +36,7 @@ namespace GAPSeguros
 				})
 				.AddFluentValidation(fv => // We configure the validators
 				{
-					//fv.RegisterValidatorsFromAssemblyContaining<ArticleValidator>();
-					//fv.RegisterValidatorsFromAssemblyContaining<StoresValidator>();
+					fv.RegisterValidatorsFromAssemblyContaining<PolicyValidator>();
 				});
 
 			// We configure the dependency injection for the DB context
