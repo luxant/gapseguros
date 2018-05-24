@@ -1,41 +1,42 @@
 ﻿@model IEnumerable<DataAccess.Database.PolicyByUser>
 
 @{
-    ViewData["Title"] = "Index";
+	ViewData["Title"] = "Index";
 }
 
 <h2>Index</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+	<a asp-action="Create">Create New</a>
 </p>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Policy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Policy.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PolicyByUserId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PolicyByUserId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PolicyByUserId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Policy)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.User)
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Policy.Name)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.User.Name)
+				</td>
+				<td>
+					<a asp-action="Edit" asp-route-id="@item.PolicyByUserId">Edit</a> |
+					<a asp-action="Details" asp-route-id="@item.PolicyByUserId">Details</a> |
+					<a asp-action="Delete" asp-route-id="@item.PolicyByUserId">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>

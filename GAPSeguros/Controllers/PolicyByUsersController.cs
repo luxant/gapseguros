@@ -6,23 +6,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Database;
+using DataAccess.Repositories;
 
 namespace GAPSeguros.Controllers
 {
 	public class PolicyByUsersController : Controller
 	{
-		private readonly GAPSegurosContext _context;
+		private readonly IPolicyByUserRepository _policyByUserRepository;
+		private readonly IPolicyRepository _policyRepository;
+		private readonly IUserRepository _userRepository;
 
-		public PolicyByUsersController(GAPSegurosContext context)
+		public PolicyByUsersController(IPolicyByUserRepository policyByUserRepository, IPolicyRepository policyRepository, IUserRepository userRepository)
 		{
-			_context = context;
+			_policyByUserRepository = policyByUserRepository;
+			_policyRepository = policyRepository;
+			_userRepository = userRepository;
 		}
 
 		// GET: PolicyByUsers
 		public async Task<IActionResult> Index()
 		{
-			var gAPSegurosContext = _context.PolicyByUser.Include(p => p.Policy).Include(p => p.User);
-			return View(await gAPSegurosContext.ToListAsync());
+			return View(await _policyByUserRepository.GetAll());
 		}
 
 		// GET: PolicyByUsers/Details/5
@@ -33,10 +37,8 @@ namespace GAPSeguros.Controllers
 				return NotFound();
 			}
 
-			var policyByUser = await _context.PolicyByUser
-				.Include(p => p.Policy)
-				.Include(p => p.User)
-				.SingleOrDefaultAsync(m => m.PolicyByUserId == id);
+			var policyByUser = await _policyByUserRepository.GetById(id);
+
 			if (policyByUser == null)
 			{
 				return NotFound();
@@ -46,10 +48,13 @@ namespace GAPSeguros.Controllers
 		}
 
 		// GET: PolicyByUsers/Create
-		public IActionResult Create()
+		public async Task<IActionResult> Create()
 		{
-			ViewData["PolicyId"] = new SelectList(_context.Policy, "PolicyId", "Name");
-			ViewData["UserId"] = new SelectList(_context.User, "UserId", "Name");
+			var policies = await _policyRepository.GetAll();
+			var users = await _userRepository.GetAll();
+
+			ViewData["PolicyId"] = new SelectList(policies, "PolicyId", "Name");
+			ViewData["UserId"] = new SelectList(users, "UserId", "Name");
 			return View();
 		}
 
@@ -62,12 +67,16 @@ namespace GAPSeguros.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				_context.Add(policyByUser);
-				await _context.SaveChangesAsync();
+				await _policyByUserRepository.Create(policyByUser);
+
 				return RedirectToAction(nameof(Index));
 			}
-			ViewData["PolicyId"] = new SelectList(_context.Policy, "PolicyId", "Name", policyByUser.PolicyId);
-			ViewData["UserId"] = new SelectList(_context.User, "UserId", "Name", policyByUser.UserId);
+
+			var policies = await _policyRepository.GetAll();
+			var users = await _userRepository.GetAll();
+
+			ViewData["PolicyId"] = new SelectList(policies, "PolicyId", "Name");
+			ViewData["UserId"] = new SelectList(users, "UserId", "Name");
 			return View(policyByUser);
 		}
 
@@ -79,13 +88,18 @@ namespace GAPSeguros.Controllers
 				return NotFound();
 			}
 
-			var policyByUser = await _context.PolicyByUser.SingleOrDefaultAsync(m => m.PolicyByUserId == id);
+			var policyByUser = await _policyByUserRepository.GetById(id);
+
 			if (policyByUser == null)
 			{
 				return NotFound();
 			}
-			ViewData["PolicyId"] = new SelectList(_context.Policy, "PolicyId", "Name", policyByUser.PolicyId);
-			ViewData["UserId"] = new SelectList(_context.User, "UserId", "Name", policyByUser.UserId);
+
+			var policies = await _policyRepository.GetAll();
+			var users = await _userRepository.GetAll();
+
+			ViewData["PolicyId"] = new SelectList(policies, "PolicyId", "Name");
+			ViewData["UserId"] = new SelectList(users, "UserId", "Name");
 			return View(policyByUser);
 		}
 
@@ -105,8 +119,7 @@ namespace GAPSeguros.Controllers
 			{
 				try
 				{
-					_context.Update(policyByUser);
-					await _context.SaveChangesAsync();
+					await _policyByUserRepository.Update(policyByUser);
 				}
 				catch (DbUpdateConcurrencyException)
 				{
@@ -121,8 +134,12 @@ namespace GAPSeguros.Controllers
 				}
 				return RedirectToAction(nameof(Index));
 			}
-			ViewData["PolicyId"] = new SelectList(_context.Policy, "PolicyId", "Name", policyByUser.PolicyId);
-			ViewData["UserId"] = new SelectList(_context.User, "UserId", "Name", policyByUser.UserId);
+
+			var policies = await _policyRepository.GetAll();
+			var users = await _userRepository.GetAll();
+
+			ViewData["PolicyId"] = new SelectList(policies, "PolicyId", "Name");
+			ViewData["UserId"] = new SelectList(users, "UserId", "Name");
 			return View(policyByUser);
 		}
 
@@ -134,10 +151,7 @@ namespace GAPSeguros.Controllers
 				return NotFound();
 			}
 
-			var policyByUser = await _context.PolicyByUser
-				.Include(p => p.Policy)
-				.Include(p => p.User)
-				.SingleOrDefaultAsync(m => m.PolicyByUserId == id);
+			var policyByUser = await _policyByUserRepository.GetById(id);
 			if (policyByUser == null)
 			{
 				return NotFound();
@@ -151,15 +165,14 @@ namespace GAPSeguros.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
 		{
-			var policyByUser = await _context.PolicyByUser.SingleOrDefaultAsync(m => m.PolicyByUserId == id);
-			_context.PolicyByUser.Remove(policyByUser);
-			await _context.SaveChangesAsync();
+			await _policyByUserRepository.DeleteById(id);
+
 			return RedirectToAction(nameof(Index));
 		}
 
 		private bool PolicyByUserExists(int id)
 		{
-			return _context.PolicyByUser.Any(e => e.PolicyByUserId == id);
+			return _policyByUserRepository.GetById(id) != null;
 		}
 	}
 }

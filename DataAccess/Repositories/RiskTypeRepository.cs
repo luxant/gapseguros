@@ -17,13 +17,13 @@ namespace DataAccess.Repositories
 			_context = context;
 		}
 
-		public async void Create(RiskType model)
+		public async Task Create(RiskType model)
 		{
 			_context.Add(model);
 			await _context.SaveChangesAsync();
 		}
 
-		public async void DeleteById(int id)
+		public async Task DeleteById(int id)
 		{
 			var policy = await _context.RiskType.SingleOrDefaultAsync(m => m.RiskTypeId == id);
 			_context.RiskType.Remove(policy);
@@ -43,7 +43,7 @@ namespace DataAccess.Repositories
 				.SingleOrDefaultAsync(m => m.RiskTypeId == id);
 		}
 
-		public async void Update(RiskType model)
+		public async Task Update(RiskType model)
 		{
 			_context.Update(model);
 			await _context.SaveChangesAsync();

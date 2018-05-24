@@ -10,12 +10,12 @@ namespace DataAccess.Repositories
 	{
 		Task<IQueryable<T>> GetAll();
 
-		void Create(T model);
+		Task Create(T model);
 
 		Task<T> GetById(int? id);
 
-		void Update(T model);
+		Task Update(T model);
 
-		void DeleteById(int id);
+		Task DeleteById(int id);
 	}
 }

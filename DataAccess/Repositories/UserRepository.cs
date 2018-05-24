@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
-	public class PolicyRepository : IPolicyRepository
+	public class UserRepository : IUserRepository
 	{
 		private readonly GAPSegurosContext _context;
 
-		public PolicyRepository(GAPSegurosContext context)
+		public UserRepository(GAPSegurosContext context)
 		{
 			_context = context;
 		}
 
-		public async Task Create(Policy model)
+		public async Task Create(User model)
 		{
 			_context.Add(model);
 			await _context.SaveChangesAsync();
@@ -25,28 +25,25 @@ namespace DataAccess.Repositories
 
 		public async Task DeleteById(int id)
 		{
-			var policy = await _context.Policy.SingleOrDefaultAsync(m => m.PolicyId == id);
-			_context.Policy.Remove(policy);
+			var policy = await _context.User.SingleOrDefaultAsync(m => m.UserId == id);
+			_context.User.Remove(policy);
 			await _context.SaveChangesAsync();
 		}
 
-		public Task<IQueryable<Policy>> GetAll()
+		public Task<IQueryable<User>> GetAll()
 		{
-			var result = _context.Policy
-				.Include(x => x.RiskType)
-				.AsQueryable();
+			var result = _context.User.AsQueryable();
 
 			return Task.FromResult(result);
 		}
 
-		public Task<Policy> GetById(int? id)
+		public Task<User> GetById(int? id)
 		{
-			return _context.Policy
-				.Include(p => p.RiskType)
-				.SingleOrDefaultAsync(m => m.PolicyId == id);
+			return _context.User
+				.SingleOrDefaultAsync(m => m.UserId == id);
 		}
 
-		public async Task Update(Policy model)
+		public async Task Update(User model)
 		{
 			_context.Update(model);
 			await _context.SaveChangesAsync();

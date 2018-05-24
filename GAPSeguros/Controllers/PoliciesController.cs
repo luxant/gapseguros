@@ -62,7 +62,7 @@ namespace GAPSeguros.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				_policyRepository.Create(policy);
+				await _policyRepository.Create(policy);
 
 				return RedirectToAction(nameof(Index));
 			}
@@ -110,7 +110,7 @@ namespace GAPSeguros.Controllers
 			{
 				try
 				{
-					_policyRepository.Update(policy);
+					await _policyRepository.Update(policy);
 				}
 				catch (DbUpdateConcurrencyException)
 				{
@@ -155,7 +155,7 @@ namespace GAPSeguros.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
 		{
-			_policyRepository.DeleteById(id);
+			await _policyRepository.DeleteById(id);
 
 			return RedirectToAction(nameof(Index));
 		}
