@@ -19,14 +19,30 @@
 			</div>
 		</div>
 		<div class="col-md-8">
-			<label class="col-md-4">Selected user:</label>
-			<span class="col-md-8" v-if="selectedUser">{{selectedUser.name}}</span>
-			<span class="col-md-8" v-else="!selectedUser">N/A</span>
+			<span class="col-md-11">
+				<label>Selected user:</label>&nbsp;
+				<template v-if="selectedUser">
+					{{selectedUser.name}}
+				</template>
+				<template v-else="!selectedUser">
+					N/A
+				</template>
+			</span>
+			<span class="col-md-1">
+				<template v-if="selectedUser">
+					<span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+				</template>
+				<template v-else="!selectedUser">
+					<span class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+				</template>
+			</span>
 		</div>
 	</section>
-	<section v-show="showSearchTable">
-		<h3>User list</h3>
-		<div class="col-md-12">
+	<br />
+	<br />
+	<section v-show="showSearchTable" class="panel panel-info">
+		<div class="panel-heading">User list</div>
+		<div class="panel-body">
 			<table class="table">
 				<thead>
 					<tr>
@@ -45,9 +61,9 @@
 			</table>
 		</div>
 	</section>
-	<section>
-		<h3>User assigned policies</h3>
-		<div class="col-md-12">
+	<section class="panel panel-primary">
+		<div class="panel-heading">User assigned policies</div>
+		<div class="panel-body">
 			<table class="table">
 				<thead>
 					<tr>
@@ -66,25 +82,27 @@
 			</table>
 		</div>
 	</section>
-	<h3>All policies</h3>
-	<div class="col-md-12">
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Policy</th>
-					<th>Actions</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for="policy in policies">
-					<td>{{policy.name}}</td>
-					<td>
-						<button :disabled="!isUserSelected" class="btn btn-default" v-on:click="assignPolicy(policy)">Assign policy</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+	<section class="panel panel-primary">
+		<div class="panel-heading">All policies</div>
+		<div class="panel-body">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Policy</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="policy in policies">
+						<td>{{policy.name}}</td>
+						<td>
+							<button :disabled="!isUserSelected" class="btn btn-default" v-on:click="assignPolicy(policy)">Assign policy</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</section>
 </div>
 
 
