@@ -22,7 +22,7 @@
 		"sourceMap": false
 	},
 	{
-		"outputFileName": "wwwroot/js/components/assigments.min.js",
+		"outputFileName": "wwwroot/js/components/assigments.js",
 		"inputFiles": [
 			"wwwroot/js/components/assigments.js"
 		],

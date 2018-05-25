@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DataAccess.Database;
 using DataAccess.DTO;
 using DataAccess.Repositories;
+using GAPSeguros.Auth;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GAPSeguros.Api
 {
 	[Route("api/[controller]")]
+	[BasicAuthorize("my_username", "my_password")]
 	public class PoliciesController : Controller
 	{
 		private readonly IPolicyRepository _policyRepository;
