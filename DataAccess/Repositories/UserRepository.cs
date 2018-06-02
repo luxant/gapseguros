@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,8 +21,15 @@ namespace DataAccess.Repositories
 
 		public async Task<User> Create(User model)
 		{
-			_context.Add(model);
-			await _context.SaveChangesAsync();
+			// We convert the password into an SHA1 hash
+			var sha1Provider = new SHA1CryptoServiceProvider();
+
+			var result = sha1Provider.ComputeHash(Encoding.UTF8.GetBytes(model.Password));
+
+			model.Password = BitConverter.ToString(result).Replace("-", string.Empty).ToLowerInvariant();
+
+			//_context.Add(model);
+			//await _context.SaveChangesAsync();
 
 			return model;
 		}
@@ -45,6 +54,19 @@ namespace DataAccess.Repositories
 				.SingleOrDefaultAsync(m => m.UserId == id);
 		}
 
+		public Task<User> GetByUserName(string userName)
+		{
+			return _context.User
+				.SingleOrDefaultAsync(m => m.Name == userName);
+		}
+
+		public Task<User> GetByUserNameAndRoles(string userName)
+		{
+			return _context.User
+				.Include(x => x.RoleByUser)
+				.SingleOrDefaultAsync(m => m.Name == userName);
+		}
+
 		public Task<IQueryable<User>> SearchUsersByTerm(string serachTerm)
 		{
 			var result = _context.User
@@ -59,6 +81,13 @@ namespace DataAccess.Repositories
 		{
 			_context.Update(model);
 			await _context.SaveChangesAsync();
+		}
+
+		public Task<User> ValidateUserNameAndPassword(string name, string password)
+		{
+			return _context.User
+				.Include(x => x.RoleByUser)
+				.FirstOrDefaultAsync(x => x.Name.Contains(name) && x.Password == password);
 		}
 	}
 }

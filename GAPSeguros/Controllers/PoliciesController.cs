@@ -12,7 +12,7 @@ using FluentValidation.AspNetCore;
 
 namespace GAPSeguros.Controllers
 {
-	public class PoliciesController : Controller
+	public class PoliciesController : BaseController
 	{
 		private readonly IPolicyRepository _policyRepository;
 		private readonly IRiskTypeRepository _riskTypeRepository;

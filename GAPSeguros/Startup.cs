@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using DataAccess.Repositories;
 using DataAccess.Validation;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace GAPSeguros
 {
@@ -29,6 +30,9 @@ namespace GAPSeguros
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+					.AddCookie();
+
 			services.AddMvc()
 				.AddXmlSerializerFormatters() // We add the XML support for the API reponse
 				.AddJsonOptions(options =>
@@ -72,6 +76,8 @@ namespace GAPSeguros
 			}
 
 			app.UseStaticFiles();
+
+			app.UseAuthentication();
 
 			app.UseMvc(routes =>
 			{

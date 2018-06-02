@@ -10,7 +10,7 @@ using DataAccess.Repositories;
 
 namespace GAPSeguros.Controllers
 {
-	public class RiskTypesController : Controller
+	public class RiskTypesController : BaseController
 	{
 		private readonly IRiskTypeRepository _riskTypeRepository;
 
