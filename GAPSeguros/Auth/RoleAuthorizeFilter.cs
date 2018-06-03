@@ -10,24 +10,31 @@ using System.Threading.Tasks;
 using DataAccess.DTO;
 using DataAccess.Enums;
 using DataAccess.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace GAPSeguros.Auth
 {
 	public class RoleAuthorizeFilter : IAuthorizationFilter
 	{
-		private readonly IUserRepository _userRepository;
+		private readonly IRoleByUserRepository _roleByUserRepository;
 		private readonly Role[] _roles;
 
-		public RoleAuthorizeFilter(IUserRepository userRepository, params DataAccess.Enums.Role[] roles)
+		public RoleAuthorizeFilter(IRoleByUserRepository roleByUserRepository, params DataAccess.Enums.Role[] roles)
 		{
-			_userRepository = userRepository;
+			_roleByUserRepository = roleByUserRepository;
 			_roles = roles;
 		}
 
 		public void OnAuthorization(AuthorizationFilterContext context)
 		{
+			if (ActionHasAllowAnonymousAttributed(context))
+			{
+				return;
+			}
+
 			var userNameType = context.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
 
 			if (userNameType == null)
@@ -38,9 +45,9 @@ namespace GAPSeguros.Auth
 			}
 
 			// We check the user exist in the database
-			var user = _userRepository.GetByUserNameAndRoles(userNameType.Value).Result;
+			var userRoles = _roleByUserRepository.GetUserRoles(int.Parse(userNameType.Value)).Result;
 
-			if (user == null)
+			if (!userRoles.Any())
 			{
 				// Return unauthorized
 				context.Result = new ForbidResult();
@@ -48,7 +55,7 @@ namespace GAPSeguros.Auth
 			}
 
 			var allowedRolesId = _roles.Select(x => (int)x);
-			var userRoleIds = user.RoleByUser.Select(x => x.RoleId);
+			var userRoleIds = userRoles.Select(x => x.RoleId);
 
 			// We check that any of the role the user has is allowed for the action invoked
 			if (userRoleIds.Any(userRoleId => allowedRolesId.Contains(userRoleId)))
@@ -58,6 +65,15 @@ namespace GAPSeguros.Auth
 
 			// Return unauthorized
 			context.Result = new ForbidResult();
+		}
+
+		private bool ActionHasAllowAnonymousAttributed(AuthorizationFilterContext context)
+		{
+			var actionDescriptor = (ControllerActionDescriptor)context.ActionDescriptor;
+
+			var actionHasAnonymousAttribute = actionDescriptor.MethodInfo.GetCustomAttributes(typeof(AllowAnonymousAttribute), true).Any();
+
+			return actionHasAnonymousAttribute;
 		}
 	}
 }

@@ -18,9 +18,8 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
 </head>
 <body>
-	<nav class="navbar navbar-inverse navbar-fixed-top">
+	<nav class="navbar navbar-inverse">
 		<div class="container">
-			@*<img src="~/images/logo.png" asp-append-version="true" class="logo col-lg-1 hidden-md hidden-sm hidden-xs" />*@
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 					<span class="sr-only">Toggle navigation</span>
@@ -37,6 +36,8 @@
 					<li><a asp-area="" asp-controller="RiskTypes" asp-action="Index">Risk Types</a></li>
 					<li><a asp-area="" asp-controller="Assignments" asp-action="Index">Assignments</a></li>
 					<li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+					<li><a asp-area="" asp-controller="RoleByUsers" asp-action="Index">Users roles</a></li>
+					<li><a asp-area="" asp-controller="Account" asp-action="Logout" class="logout-link">Logout</a></li>
 				</ul>
 			</div>
 		</div>

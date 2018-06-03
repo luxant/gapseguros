@@ -12,7 +12,6 @@ namespace DataAccess.Repositories
 	{
 		Task<IQueryable<User>> SearchUsersByTerm(string serachTerm);
 		Task<User> GetByUserName(string userName);
-		Task<User> GetByUserNameAndRoles(string userName);
 		Task<User> ValidateUserNameAndPassword(string name, string password);
 	}
 }
