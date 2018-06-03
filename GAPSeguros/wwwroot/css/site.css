@@ -1,5 +1,5 @@
 ﻿body {
-	padding-top: 50px;
+	/*padding-top: 50px;*/
 	padding-bottom: 120px;
 	background: ghostwhite;
 }
@@ -40,10 +40,15 @@
 	padding-top: 3px;
 }
 
+.logout-link {
+	color: cadetblue !important;
+}
+
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
-    /* Hide captions */
-    .carousel-caption {
+	/* Hide captions */
+	.carousel-caption {
         display: none;
     }
 }

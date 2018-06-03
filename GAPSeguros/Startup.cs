@@ -57,9 +57,11 @@ namespace GAPSeguros
 			services.AddScoped<IRiskTypeRepository, RiskTypeRepository>();
 			services.AddScoped<IPolicyByUserRepository, PolicyByUserRepository>();
 			services.AddScoped<IUserRepository, UserRepository>();
+			services.AddScoped<IRoleByUserRepository, RoleByUserRepository>();
 
 			// Validators DI
 			services.AddScoped<AbstractValidator<Policy>, PolicyValidator>();
+			services.AddScoped<AbstractValidator<User>, UserValidator>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

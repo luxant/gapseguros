@@ -22,22 +22,18 @@ namespace DataAccess.Repositories
 		public async Task<User> Create(User model)
 		{
 			// We convert the password into an SHA1 hash
-			var sha1Provider = new SHA1CryptoServiceProvider();
+			model.Password = Helpers.Cryptography.Sha1(model.Password);
 
-			var result = sha1Provider.ComputeHash(Encoding.UTF8.GetBytes(model.Password));
-
-			model.Password = BitConverter.ToString(result).Replace("-", string.Empty).ToLowerInvariant();
-
-			//_context.Add(model);
-			//await _context.SaveChangesAsync();
+			_context.Add(model);
+			await _context.SaveChangesAsync();
 
 			return model;
 		}
 
 		public async Task DeleteById(int id)
 		{
-			var policy = await _context.User.SingleOrDefaultAsync(m => m.UserId == id);
-			_context.User.Remove(policy);
+			var entity = await _context.User.SingleOrDefaultAsync(m => m.UserId == id);
+			_context.User.Remove(entity);
 			await _context.SaveChangesAsync();
 		}
 
@@ -60,13 +56,6 @@ namespace DataAccess.Repositories
 				.SingleOrDefaultAsync(m => m.Name == userName);
 		}
 
-		public Task<User> GetByUserNameAndRoles(string userName)
-		{
-			return _context.User
-				.Include(x => x.RoleByUser)
-				.SingleOrDefaultAsync(m => m.Name == userName);
-		}
-
 		public Task<IQueryable<User>> SearchUsersByTerm(string serachTerm)
 		{
 			var result = _context.User
@@ -79,12 +68,23 @@ namespace DataAccess.Repositories
 
 		public async Task Update(User model)
 		{
-			_context.Update(model);
+			var originalData = await GetById(model.UserId);
+
+			if (!string.IsNullOrEmpty(model.Password))
+			{
+				originalData.Password = Helpers.Cryptography.Sha1(model.Password);
+			}
+
+			originalData.Name = model.Name;
+
+			_context.Update(originalData);
 			await _context.SaveChangesAsync();
 		}
 
 		public Task<User> ValidateUserNameAndPassword(string name, string password)
 		{
+			password = Helpers.Cryptography.Sha1(password);
+
 			return _context.User
 				.Include(x => x.RoleByUser)
 				.FirstOrDefaultAsync(x => x.Name.Contains(name) && x.Password == password);

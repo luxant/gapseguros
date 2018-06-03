@@ -12,35 +12,40 @@ using FluentValidation.AspNetCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GAPSeguros.Controllers
 {
 	public class AccountController : BaseController
 	{
 		private readonly IUserRepository _userRepository;
+		private readonly AbstractValidator<User> _abstractValidator;
 
-		public AccountController(IUserRepository userRepository)
+		public AccountController(IUserRepository userRepository, AbstractValidator<User> abstractValidator)
 		{
 			_userRepository = userRepository;
+			_abstractValidator = abstractValidator;
 		}
 
 		// GET: Policies
+		[AllowAnonymous]
 		public async Task<IActionResult> AccessDenied()
 		{
 			return View();
 		}
 
 		// POST: Account/AccessDenied
+		[AllowAnonymous]
 		[HttpPost]
-		public async Task<IActionResult> AccessDenied([Bind("Name,Password")] User user, string returnUrl)
+		public async Task<IActionResult> AccessDenied([Bind("Name,Password")] User model, string returnUrl)
 		{
-			var result = await _userRepository.ValidateUserNameAndPassword(user.Name, user.Password);
+			var user = await _userRepository.ValidateUserNameAndPassword(model.Name, model.Password);
 
-			if (result != null)
+			if (user != null)
 			{
 				// Since the login was successful, we autenticate the user
 				var claims = new List<Claim> {
-					new Claim(ClaimTypes.NameIdentifier, user.Name),
+					new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
 				};
 
 				var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -121,73 +126,91 @@ namespace GAPSeguros.Controllers
 			return View(user);
 		}
 
-		// POST: Users/Edit/5
+		//POST: Users/Edit/5
 		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-		//[HttpPost]
-		//[ValidateAntiForgeryToken]
-		//public async Task<IActionResult> Edit(int id, [Bind("UserId,Name,Password")] User user)
-		//{
-		//	if (id != user.UserId)
-		//	{
-		//		return NotFound();
-		//	}
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Edit(int id, [Bind("UserId,Name,Password")] User user)
+		{
+			if (id != user.UserId)
+			{
+				return NotFound();
+			}
 
-		//	if (ModelState.IsValid)
-		//	{
-		//		try
-		//		{
-		//			_context.Update(user);
-		//			await _context.SaveChangesAsync();
-		//		}
-		//		catch (DbUpdateConcurrencyException)
-		//		{
-		//			if (!UserExists(user.UserId))
-		//			{
-		//				return NotFound();
-		//			}
-		//			else
-		//			{
-		//				throw;
-		//			}
-		//		}
-		//		return RedirectToAction(nameof(Index));
-		//	}
-		//	return View(user);
-		//}
+			if (ModelState.IsValid)
+			{
+				try
+				{
+					await _userRepository.Update(user);
+				}
+				catch (DbUpdateConcurrencyException)
+				{
+					if (!UserExists(user.UserId))
+					{
+						return NotFound();
+					}
+					else
+					{
+						throw;
+					}
+				}
+				return RedirectToAction(nameof(Index));
+			}
+			return View(user);
+		}
 
-		//// GET: Users/Delete/5
-		//public async Task<IActionResult> Delete(int? id)
-		//{
-		//	if (id == null)
-		//	{
-		//		return NotFound();
-		//	}
+		// GET: Users/Delete/5
+		public async Task<IActionResult> Delete(int? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
 
-		//	var user = await _context.User
-		//		.SingleOrDefaultAsync(m => m.UserId == id);
-		//	if (user == null)
-		//	{
-		//		return NotFound();
-		//	}
+			var user = await _userRepository.GetById(id);
+			if (user == null)
+			{
+				return NotFound();
+			}
 
-		//	return View(user);
-		//}
+			return View(user);
+		}
 
-		//// POST: Users/Delete/5
-		//[HttpPost, ActionName("Delete")]
-		//[ValidateAntiForgeryToken]
-		//public async Task<IActionResult> DeleteConfirmed(int id)
-		//{
-		//	var user = await _context.User.SingleOrDefaultAsync(m => m.UserId == id);
-		//	_context.User.Remove(user);
-		//	await _context.SaveChangesAsync();
-		//	return RedirectToAction(nameof(Index));
-		//}
+		// POST: Users/Delete/5
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(int id)
+		{
+			var entity = await _userRepository.GetById(id);
 
-		//private bool UserExists(int id)
-		//{
-		//	return _context.User.Any(e => e.UserId == id);
-		//}
+			var result = _abstractValidator.Validate(entity, ruleSet: "delete");
+
+
+			if (result.IsValid)
+			{
+				await _userRepository.DeleteById(id);
+
+				return RedirectToAction(nameof(Index));
+			}
+			else
+			{
+				result.AddToModelState(ModelState, null);
+
+				return await Delete(id);
+			}
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> Logout()
+		{
+			await HttpContext.SignOutAsync();
+			return Redirect("/");
+		}
+
+		private bool UserExists(int id)
+		{
+			return _userRepository.GetById(id) != null;
+		}
 	}
 }
