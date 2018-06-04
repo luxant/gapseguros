@@ -12,13 +12,15 @@ namespace GAPSeguros.Controllers
 {
 	public class RoleByUsersController : BaseController
 	{
-		private readonly GAPSegurosContext _context;
 		private readonly IRoleByUserRepository _roleByUserRepository;
+		private readonly IRoleRepository _roleRepository;
+		private readonly IUserRepository _userRepository;
 
-		public RoleByUsersController(GAPSegurosContext context, IRoleByUserRepository roleByUserRepository)
+		public RoleByUsersController(IRoleByUserRepository roleByUserRepository, IRoleRepository roleRepository, IUserRepository userRepository)
 		{
-			_context = context;
 			_roleByUserRepository = roleByUserRepository;
+			_roleRepository = roleRepository;
+			_userRepository = userRepository;
 		}
 
 		// GET: RoleByUsers
@@ -45,10 +47,10 @@ namespace GAPSeguros.Controllers
 		}
 
 		// GET: RoleByUsers/Create
-		public IActionResult Create()
+		public async Task<IActionResult> Create()
 		{
-			ViewData["RoleId"] = new SelectList(_context.Role, "RoleId", "Name");
-			ViewData["UserId"] = new SelectList(_context.User, "UserId", "Name");
+			ViewData["RoleId"] = new SelectList(await _roleRepository.GetAll(), "RoleId", "Name");
+			ViewData["UserId"] = new SelectList(await _userRepository.GetAll(), "UserId", "Name");
 			return View();
 		}
 
@@ -64,8 +66,8 @@ namespace GAPSeguros.Controllers
 				await _roleByUserRepository.Create(roleByUser);
 				return RedirectToAction(nameof(Index));
 			}
-			ViewData["RoleId"] = new SelectList(_context.Role, "RoleId", "Name", roleByUser.RoleId);
-			ViewData["UserId"] = new SelectList(_context.User, "UserId", "Name", roleByUser.UserId);
+			ViewData["RoleId"] = new SelectList(await _roleRepository.GetAll(), "RoleId", "Name", roleByUser.RoleId);
+			ViewData["UserId"] = new SelectList(await _userRepository.GetAll(), "UserId", "Name", roleByUser.UserId);
 			return View(roleByUser);
 		}
 
@@ -82,8 +84,8 @@ namespace GAPSeguros.Controllers
 			{
 				return NotFound();
 			}
-			ViewData["RoleId"] = new SelectList(_context.Role, "RoleId", "Name", roleByUser.RoleId);
-			ViewData["UserId"] = new SelectList(_context.User, "UserId", "Name", roleByUser.UserId);
+			ViewData["RoleId"] = new SelectList(await _roleRepository.GetAll(), "RoleId", "Name", roleByUser.RoleId);
+			ViewData["UserId"] = new SelectList(await _userRepository.GetAll(), "UserId", "Name", roleByUser.UserId);
 			return View(roleByUser);
 		}
 
@@ -118,8 +120,8 @@ namespace GAPSeguros.Controllers
 				}
 				return RedirectToAction(nameof(Index));
 			}
-			ViewData["RoleId"] = new SelectList(_context.Role, "RoleId", "Name", roleByUser.RoleId);
-			ViewData["UserId"] = new SelectList(_context.User, "UserId", "Name", roleByUser.UserId);
+			ViewData["RoleId"] = new SelectList(await _roleRepository.GetAll(), "RoleId", "Name", roleByUser.RoleId);
+			ViewData["UserId"] = new SelectList(await _userRepository.GetAll(), "UserId", "Name", roleByUser.UserId);
 			return View(roleByUser);
 		}
 

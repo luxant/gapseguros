@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
-	public class CoverageTypeRepository : ICoverageTypeRepository
+	public class RoleRepository : IRoleRepository
 	{
 		private readonly GAPSegurosContext _context;
 
-		public CoverageTypeRepository(GAPSegurosContext context)
+		public RoleRepository(GAPSegurosContext context)
 		{
 			_context = context;
 		}
 
-		public async Task<CoverageType> Create(CoverageType model)
+		public async Task<Role> Create(Role model)
 		{
 			_context.Add(model);
 			await _context.SaveChangesAsync();
@@ -27,25 +27,25 @@ namespace DataAccess.Repositories
 
 		public async Task DeleteById(int id)
 		{
-			var model = await _context.CoverageType.SingleOrDefaultAsync(m => m.CoverageTypeId == id);
-			_context.CoverageType.Remove(model);
+			var model = await _context.Role.SingleOrDefaultAsync(m => m.RoleId == id);
+			_context.Role.Remove(model);
 			await _context.SaveChangesAsync();
 		}
 
-		public Task<IQueryable<CoverageType>> GetAll()
+		public Task<IQueryable<Role>> GetAll()
 		{
-			var result = _context.CoverageType.AsQueryable();
+			var result = _context.Role.AsQueryable();
 
 			return Task.FromResult(result);
 		}
 
-		public Task<CoverageType> GetById(int? id)
+		public Task<Role> GetById(int? id)
 		{
-			return _context.CoverageType
-				.SingleOrDefaultAsync(m => m.CoverageTypeId == id);
+			return _context.Role
+				.SingleOrDefaultAsync(m => m.RoleId == id);
 		}
 
-		public async Task Update(CoverageType model)
+		public async Task Update(Role model)
 		{
 			_context.Update(model);
 			await _context.SaveChangesAsync();
