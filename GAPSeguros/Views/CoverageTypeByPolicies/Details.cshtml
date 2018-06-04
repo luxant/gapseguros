@@ -1,0 +1,30 @@
+﻿@model DataAccess.Database.CoverageTypeByPolicy
+
+@{
+	ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+	<h4>CoverageTypeByPolicy</h4>
+	<hr />
+	<dl class="dl-horizontal">
+		<dt>
+			@Html.DisplayNameFor(model => model.CoverageType)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.CoverageType.Name)
+		</dd>
+		<dt>
+			@Html.DisplayNameFor(model => model.Policy)
+		</dt>
+		<dd>
+			@Html.DisplayFor(model => model.Policy.Name)
+		</dd>
+	</dl>
+</div>
+<div>
+	<a asp-action="Edit" asp-route-id="@Model.CoverageTypeByPolicyId">Edit</a> |
+	<a asp-action="Index">Back to List</a>
+</div>

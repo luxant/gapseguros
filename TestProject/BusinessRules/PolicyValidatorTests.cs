@@ -25,9 +25,11 @@ namespace TestProject.BusinessRules
 
 			// We define the data that will be returned by the repository
 			var mockRepository = new Mock<IPolicyByUserRepository>();
+			var mockICoverageTypeByPolicyRepository = new Mock<ICoverageTypeByPolicyRepository>();
+
 			mockRepository.Setup(x => x.GetPolicyAssignations(It.IsAny<int>())).Returns(assignments.AsQueryable());
 
-			var validator = new PolicyValidator(mockRepository.Object);
+			var validator = new PolicyValidator(mockRepository.Object, mockICoverageTypeByPolicyRepository.Object);
 
 			var policy = new Policy();
 
@@ -43,8 +45,10 @@ namespace TestProject.BusinessRules
 		{
 			// Arrange
 			var mockRepository = new Mock<IPolicyByUserRepository>();
+			var mockICoverageTypeByPolicyRepository = new Mock<ICoverageTypeByPolicyRepository>();
 
-			var validator = new PolicyValidator(mockRepository.Object);
+
+			var validator = new PolicyValidator(mockRepository.Object, mockICoverageTypeByPolicyRepository.Object);
 
 			var policy = new Policy()
 			{
@@ -64,8 +68,9 @@ namespace TestProject.BusinessRules
 		{
 			// Arrange
 			var mockRepository = new Mock<IPolicyByUserRepository>();
+			var mockICoverageTypeByPolicyRepository = new Mock<ICoverageTypeByPolicyRepository>();
 
-			var validator = new PolicyValidator(mockRepository.Object);
+			var validator = new PolicyValidator(mockRepository.Object, mockICoverageTypeByPolicyRepository.Object);
 
 			var policy = new Policy()
 			{

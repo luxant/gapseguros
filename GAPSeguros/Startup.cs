@@ -59,10 +59,13 @@ namespace GAPSeguros
 			services.AddScoped<IPolicyByUserRepository, PolicyByUserRepository>();
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<IRoleByUserRepository, RoleByUserRepository>();
+			services.AddScoped<ICoverageTypeRepository, CoverageTypeRepository>();
+			services.AddScoped<ICoverageTypeByPolicyRepository, CoverageTypeByPolicyRepository>();
 
 			// Validators DI
 			services.AddScoped<AbstractValidator<Policy>, PolicyValidator>();
 			services.AddScoped<AbstractValidator<User>, UserValidator>();
+			services.AddScoped<AbstractValidator<CoverageType>, CoverageTypeValidator>();
 
 
 			services.AddAuthorization(options =>
