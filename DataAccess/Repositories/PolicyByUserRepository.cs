@@ -55,6 +55,11 @@ namespace DataAccess.Repositories
 			return _context.PolicyByUser.Where(x => x.PolicyId == policyId);
 		}
 
+		public IQueryable<PolicyByUser> GetUserPolicies(int userId)
+		{
+			return _context.PolicyByUser.Where(x => x.UserId == userId);
+		}
+
 		public async Task Update(PolicyByUser model)
 		{
 			_context.Update(model);

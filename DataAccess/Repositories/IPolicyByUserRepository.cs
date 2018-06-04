@@ -10,5 +10,6 @@ namespace DataAccess.Repositories
 	public interface IPolicyByUserRepository : IRepository<PolicyByUser>
 	{
 		IQueryable<PolicyByUser> GetPolicyAssignations(int policyId);
+		IQueryable<PolicyByUser> GetUserPolicies(int userId);
 	}
 }

@@ -10,7 +10,7 @@ using DataAccess.Repositories;
 
 namespace GAPSeguros.Controllers
 {
-	public class RoleByUsersController : Controller
+	public class RoleByUsersController : BaseController
 	{
 		private readonly GAPSegurosContext _context;
 		private readonly IRoleByUserRepository _roleByUserRepository;
