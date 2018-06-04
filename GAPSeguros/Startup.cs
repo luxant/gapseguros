@@ -15,6 +15,7 @@ using DataAccess.Repositories;
 using DataAccess.Validation;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace GAPSeguros
 {
@@ -62,6 +63,22 @@ namespace GAPSeguros
 			// Validators DI
 			services.AddScoped<AbstractValidator<Policy>, PolicyValidator>();
 			services.AddScoped<AbstractValidator<User>, UserValidator>();
+
+
+			services.AddAuthorization(options =>
+			{
+				options.AddPolicy("AdministratorsOnlyAllowed", policy =>
+				{
+					policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+					policy.RequireAuthenticatedUser();
+					policy.RequireAssertion(context =>
+					{
+						var stringRoleId = ((int)DataAccess.Enums.Role.Admin).ToString();
+
+						return context.User.Claims.Any(x => x.Type == ClaimTypes.Role && x.Value == "1");
+					});
+				});
+			});
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

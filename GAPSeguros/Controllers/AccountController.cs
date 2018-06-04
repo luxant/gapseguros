@@ -27,17 +27,22 @@ namespace GAPSeguros.Controllers
 			_abstractValidator = abstractValidator;
 		}
 
-		// GET: Policies
 		[AllowAnonymous]
-		public async Task<IActionResult> AccessDenied()
+		public IActionResult AccessDenied()
 		{
 			return View();
+		}
+
+		[AllowAnonymous]
+		public IActionResult Login(string returnUrl)
+		{
+			return RedirectToAction(nameof(AccessDenied), new { returnUrl });
 		}
 
 		// POST: Account/AccessDenied
 		[AllowAnonymous]
 		[HttpPost]
-		public async Task<IActionResult> AccessDenied([Bind("Name,Password")] User model, string returnUrl)
+		public async Task<IActionResult> AccessDenied([Bind("Name,Password")] User model, string returnUrl = "/")
 		{
 			var user = await _userRepository.ValidateUserNameAndPassword(model.Name, model.Password);
 
@@ -47,6 +52,12 @@ namespace GAPSeguros.Controllers
 				var claims = new List<Claim> {
 					new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
 				};
+
+				// We add the roles of the user as claims
+				foreach (var role in user.RoleByUser)
+				{
+					claims.Add(new Claim(ClaimTypes.Role, role.RoleId.ToString()));
+				}
 
 				var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -89,10 +100,8 @@ namespace GAPSeguros.Controllers
 		}
 
 		// GET: Users/Create
-		public async Task<IActionResult> Create()
-		{
-			return View();
-		}
+		public IActionResult Create() => View();
+
 
 		// POST: Users/Create
 		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
